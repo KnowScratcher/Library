@@ -11,4 +11,7 @@ I switch the view to tailwind css, which allows me to make prettier pages.
 
 I feel pretty good about this layout.
 
+Also, I finished the query part.
+
+
 **Total time spent: 12h**
