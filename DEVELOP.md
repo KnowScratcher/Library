@@ -37,5 +37,16 @@ graph TD;
     Tailwindcss-->Statics;
 ```
 
-
+# Tailwind
+## Install
+```sh
+cd tailwindcss
+npm install
+```
+## Enable
+```sh
+cd tailwindcss
+npm run dev
+```
+This will automatically update the css as you write your HTML code.
 
