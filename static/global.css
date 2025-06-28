@@ -1,0 +1,107 @@
+html,body {
+    width: 98%;
+    height: 98%;
+}
+
+a {
+    text-decoration: none;
+}
+
+.title {
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+
+.w {
+    width: 100%;
+}
+
+.h {
+    height: 100%;
+}
+.p {
+    padding: 5px;
+}
+.center {
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.list {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: space-between;
+    gap: 5px;
+    width: 90%;
+    height: 85%;
+}
+
+.list-r {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: space-between;
+    gap: 5px;
+    width: 90%;
+    height: 85%;
+}
+
+
+.button {
+    height: 30%;
+    width: 100%;
+    border: 2px solid black;
+    border-radius: 5%;
+    text-align: center;
+    align-self: center;
+    flex: 1 1;
+    display: flex; /* Enable flexbox for the button */
+    align-items: center; /* Vertically center content */
+    justify-content: center; /* Horizontally center content (if needed)*/
+    font-size: 30px;
+    user-select: none;
+}
+
+.box {
+    height: 30%;
+    width: 90%;
+    border: 2px solid black;
+    border-radius: 5%;
+    text-align: center;
+    align-self: center;
+    user-select: none;
+}
+
+.r {
+    background-color: red;
+}
+.g {
+    background-color: green;
+}
+.b {
+    background-color: blue;
+}
+.y {
+    background-color: yellow;
+}
+
+.wt {
+    color: white;
+}
+.bt {
+    color: black;
+}
+
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}

@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% block content %}
+{% include 'bar.html' %}
+<script src="{{ url_for('static', path='/html5-qrcode.min.js') }}"></script>
+<div style="text-align: center;">
+    <div class="w-full px-5 my-5">
+        <input type="text" id="search" placeholder="search..."
+            class="bg-gray-50 border-2 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+    </div>
+    <br>
+    <div id="result_check">
+        <h1 class="text-2xl font-bold">Result</h1>
+        <div id="result" class="w-full px-5">
+            <table class="w-full table-fixed">
+                <thead>
+                    <tr>
+                        <th>書名</th>
+                        <th>id</th>
+                        <th>ISBN</th>
+                        <th>狀態</th>
+                        <th>位置</th>
+                    </tr>
+                </thead>
+                <tbody id="tbody">
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>
+<script>
+    let inputArea = document.getElementById("search");
+    let tbody = document.getElementById("tbody");
+    inputArea.addEventListener('input', function (evt) {
+        queryRecord(this.value);
+    });
+    queryRecord("");
+
+    function queryRecord(index) {
+        let url = "/api/query?index=" + index;
+        fetch(url, {
+            method: "GET", headers: {  // Add these headers
+                "Content-Type": "application/json"
+            }
+        })
+            .then((r) => { return r.json() })
+            .then((data) => {
+                console.log(data)
+                if (data["success"] != true) {
+                    alert(data["data"]);
+                } else {
+                    updateTable(data["data"]);
+                }
+            })
+    }
+
+    function updateTable(data) {
+        tbody.innerHTML = "";
+        let count = 0;
+        data.forEach(element => {
+            let tr = document.createElement("tr");
+            if (count % 2 == 0) {
+                tr.classList.add("bg-gray-200");
+            }
+            count++;
+            for (i of ["name", "id", "ISBN", "isHere", "collection"]) {
+                let td = document.createElement("td");
+                if (i == "isHere") {
+                    td.innerHTML = (element["isHere"] ? "在館中" : "借出中");
+                    td.style.color = (element["isHere"] ? "green" : "red");
+                } else if ((i == "ISBN" || i == "id") && element[i]) {
+                    let s = "";
+                    for (let j = 0; j < element[i].length; j += 3) {
+                        s += element[i].slice(j, j + 3) + " ";
+                    }
+                    td.innerHTML = s
+                } else {
+                    td.innerHTML = (element[i] ? element[i] : "-");
+                }
+
+                td.classList.add("px-1");
+                // td.classList.add("border-black");
+                tr.appendChild(td);
+            }
+            tbody.appendChild(tr);
+        });
+    }
+</script>
+{% endblock %}

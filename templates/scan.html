@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+{% block content %}
+{% include 'bar.html' %}
+<script src="{{ url_for('static', path='/html5-qrcode.min.js') }}"></script>
+<div style="text-align: center;">
+    <div id="reader" style="width: 90vw;"></div>
+    <br>
+    <div class="w-full px-5">
+        <div id="info" class="hidden box box-border border-2 border-black w-full px-5 py-5">
+            <h2 id="info_title" class="font-bold text-2xl">title</h2>
+            <p id="info_name">name</p>
+        </div>
+    </div>
+    <div id="result_check" class="hidden w-fill px-5">
+        <h1 class="text-2xl font-bold">Result</h1>
+        <p id="result"></p>
+        <div class="flex flex-row w-full gap-2 justify-center">
+            <button class="btn bg-red-300 text-black text-center font-bold py-5 px-4 w-full" onclick="rescan();">重新掃描</button>
+            <button id="submit" class="btn bg-green-300 text-black text-center font-bold py-5 px-4 w-full" style="display:none" onclick="submitRecord();">確認送出</button>
+        </div>
+        <!-- <button
+            onclick="html5QrCode.start({facingMode:'environment'}, config, QrCallback);document.getElementById('show').style.display = 'none';">rescan</button> -->
+    </div>
+</div>
+<script>
+    let resultText = document.getElementById("result");
+    let checkScreen = document.getElementById("result_check");
+    let submit = document.getElementById("submit");
+    let infoBox = document.getElementById("info");
+    let infoTitle = document.getElementById("info_title");
+    let infoName = document.getElementById("info_name");
+    let decoded;
+
+    const html5QrCode = new Html5Qrcode("reader");
+    const QrCallback = (decodedText, decodedResult) => {
+        infoBox.style.display = "none";
+        decoded = decodedText
+        if (decodedText) {
+            let type = "UNKNOWN", valid = true;
+            if (decodedText.length == 13) {
+                if (parseInt(decodedText[12]) == (10 - (parseInt(decodedText[0]) * 1 + parseInt(decodedText[1]) * 3 + parseInt(decodedText[2]) * 1 + parseInt(decodedText[3]) * 3 + parseInt(decodedText[4]) * 1 + parseInt(decodedText[5]) * 3 + parseInt(decodedText[6]) * 1 + parseInt(decodedText[7]) * 3 + parseInt(decodedText[8]) * 1 + parseInt(decodedText[9]) * 3 + parseInt(decodedText[10]) * 1 + parseInt(decodedText[11]) * 3) % 10) % 10) {
+                    type = "ISBN";
+                    // valid = true;
+                } else { // ?: 商品號
+                    type = "UNKNOWN";
+                    // valid = true;
+                }
+            } else if (decodedText.length == 8) {
+                if (decodedText[7] == (((11 - (parseInt(decodedText[0]) * 8 + parseInt(decodedText[1]) * 7 + parseInt(decodedText[2]) * 6 + parseInt(decodedText[3]) * 5 + parseInt(decodedText[4]) * 4 + parseInt(decodedText[5]) * 3 + parseInt(decodedText[6]) * 2) % 11) % 11) == 10 ? "X" : ((11 - (parseInt(decodedText[0]) * 8 + parseInt(decodedText[1]) * 7 + parseInt(decodedText[2]) * 6 + parseInt(decodedText[3]) * 5 + parseInt(decodedText[4]) * 4 + parseInt(decodedText[5]) * 3 + parseInt(decodedText[6]) * 2) % 11) % 11))) {
+                    type = "ISSN";
+                    // valid = true;
+                } else {
+                    type = "UNKNOWN";
+                    // valid = true;
+                }
+            }
+            if (valid) {
+                submit.style.display = "block";
+            } else {
+                submit.style.display = "none";
+            }
+            resultText.textContent = type + ": " + decodedText;
+            checkScreen.style.display = "block";
+            html5QrCode.stop();
+        }
+    }
+    const config = { fps: 10, qrbox: { width: 250, height: 250 } };
+    html5QrCode.start({ facingMode: "environment" }, config, QrCallback);
+
+    function rescan() {
+        checkScreen.style.display = "none";
+        html5QrCode.start({ facingMode: 'environment' }, config, QrCallback);
+    }
+
+    function submitRecord() {
+        data = JSON.stringify({
+            "id": decoded
+        });
+        //data = {"id":decoded};
+        console.log(data)
+        fetch("/api/record", {
+            method: "POST", body: data, headers: {  // Add these headers
+                "Content-Type": "application/json"
+            }
+        })
+            .then((r) => { return r.json() })
+            .then((data) => {
+                console.log(data)
+                if (data["success"] != true) {
+                    alert(data["message"]);
+                }else {
+                    updateInfo(data["name"], data["isIn"], data["collection"]);
+                }
+                
+                rescan();
+            })
+    }
+
+    function updateInfo(name, isIn, collection) {
+        infoBox.classList.remove("bg-green-300", "bg-red-300");
+        infoBox.classList.add((isIn ? "bg-green-300" : "bg-red-300"));
+        infoBox.style.display = "block";
+        infoTitle.innerHTML = (isIn ? "還入" : "借出");
+        infoName.innerHTML = (isIn? name + "<br>" + collection: name);
+    }
+</script>
+{% endblock %}
