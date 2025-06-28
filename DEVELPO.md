@@ -27,11 +27,14 @@ graph TD;
     API-->Worker;
     Worker-->Data;
     Data-->Global_cache;
-    Router-->Page;
+    Template-->Router;
+    Router-->Page
     Page-->User;
-    Data-->Router;
-    CSS-->Page
-    SSL-->Page
+    Data-->Template;
+    CSS-->Template;
+    SSL-->Template;
+    Statics-->Template;
+    Tailwindcss-->Statics;
 ```
 
 

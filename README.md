@@ -5,8 +5,9 @@ Library - A book managing system.
 # Install
 
 1. Download [python3.10](https://www.python.org/downloads/)
-2. use the command line, cd to the project folder
-3. execute the following command using powershell or terminal depending on your operating system:
+2. git clone this repository.
+3. Use the command line, cd to the project folder
+4. Execute the following command using powershell or terminal depending on your operating system:
    
 Windows:
 ```sh
@@ -22,7 +23,7 @@ source .venv/bin/activate
 pip3 install -r requirements.txt
 ```
 
-4. run the program using the command depending on your operating system:
+4. Run the program using the command depending on your operating system:
 
 Windows:
 ```sh
