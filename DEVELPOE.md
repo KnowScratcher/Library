@@ -13,8 +13,26 @@ directories:
 files:
 - .gitignore: you know what it is.
 - cert.pem, key.pem: self-signed ssl sign file.
-- dependencies.py: public variable management (like very public variables)
+- dependencies.py: public variable management (like very public variables (cache))
 - dev.py: dev version of main.py that reloads on changes.
 - main.py: deploy version.
 - requirements.txt: the libraries.
+
+# Structure
+
+```mermaid
+graph TD;
+    Global_cache-->Worker;
+    User-->API;
+    API-->Worker;
+    Worker-->Data;
+    Data-->Global_cache;
+    Router-->Page;
+    Page-->User;
+    Data-->Router;
+    CSS-->Page
+    SSL-->Page
+```
+
+
 
