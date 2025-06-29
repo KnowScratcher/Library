@@ -24,7 +24,7 @@ if not os.path.exists(dataPath):  # create data directory
     os.makedirs(dataPath)
 if not os.path.exists(isbnIndexPath):  # create index file
     json.dump({}, open(isbnIndexPath, "w", encoding="UTF-8"))
-if not os.path.exists(isbnIndexPath):  # create name file
+if not os.path.exists(collectionNameIndexPath):  # create name file
     json.dump({}, open(collectionNameIndexPath, "w", encoding="UTF-8"))
 # if not os.path.exists(bookNameIndexPath):  # create name file
 #     json.dump({}, open(bookNameIndexPath, "w", encoding="UTF-8"))
