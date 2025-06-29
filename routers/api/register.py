@@ -37,7 +37,7 @@ async def checkIsbnInfo(id: str) -> bool:
 
 @router.post("/api/register")
 async def register(book: Book):
-    print(book.id)
+    # print(book.id)
     if not await checkIsbnInfo(book.id):  # check if the book is registered
         return {"success": False, "message": "Book has been registered!"}
     if not book.collection in collectionNameIndex:  # check whether to register a new collection
@@ -46,3 +46,12 @@ async def register(book: Book):
     await isbnindex.add(book.id, book.collection)
     await shelver.add(book.collection, book.id, book.isbn, book.name)
     return {"success": True, "collection": book.collection, "collectionName": book.collectionName, "id": book.id, "name": book.name}
+
+@router.get("/api/available")
+async def available(id: str):
+    if not await checkIsbnInfo(id):  # check if the book is registered
+        print("in")
+        return {"success": False, "message": "Book has been registered!"}
+    else:
+        print("out")
+        return {"success": True}

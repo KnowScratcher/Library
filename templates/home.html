@@ -1,25 +1,25 @@
 {% extends 'base.html' %}
 {% block content %}
-<h1 class="ml-auto mr-auto font-bold text-center text-5xl bg-blue-400 py-5 text-white">圖書記錄系統</h1>
+<h1 class="ml-auto mr-auto font-bold text-center text-5xl bg-blue-400 py-5 text-white">{{ lang["title"] }}</h1>
 <div class="list-none px-5 w-full flex flex-col gap-5 my-5">
     <button class="btn bg-green-300 text-black text-center font-bold py-5 px-4 h-1/4 w-full rounded-xl text-4xl">
         <a href="./scan" >
-            <div>紀錄出入</div>
+            <div>{{ lang["in-out"] }}</div>
         </a>
     </button>
     <button class="btn bg-blue-300 text-black text-center font-bold py-5 px-4 h-1/4 w-full rounded-xl text-4xl">
         <a href="./query" class="button b wt">
-            <div>紀錄查詢</div>
+            <div>{{ lang["query"] }}</div>
         </a>
     </button>
     <button class="btn bg-green-300 text-black text-center font-bold py-5 px-4 h-1/4 w-full rounded-xl text-4xl">
         <a href="./register" class="button g wt">
-            <div>登錄圖書</div>
+            <div>{{ lang["register"] }}</div>
         </a>
     </button>
     <button class="btn bg-yellow-300 text-black text-center font-bold py-5 px-4 h-1/4 w-full rounded-xl text-4xl">
         <a href="#" class="button y bt">
-            <div>編輯紀錄</div>
+            <div>{{ lang["edit"] }}</div>
         </a>
     </button>
 </div>

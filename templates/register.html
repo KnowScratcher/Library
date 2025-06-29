@@ -13,39 +13,39 @@
         </div>
     </div>
     <div id="result_check" class="hidden text-center">
-        <h1 class="font-bold text-2xl">Result</h1>
+        <h1 class="font-bold text-2xl">{{ lang["result"] }}</h1>
         <p id="result"></p>
         <div class="flex flex-row w-full gap-2 justify-center">
-            <div class="btn bg-red-300 text-black text-center font-bold py-5 px-4 w-full" onclick="rescan();">重新掃描</div>
+            <div class="btn bg-red-300 text-black text-center font-bold py-5 px-4 w-full" onclick="rescan();">{{ lang["rescan"] }}</div>
             <div id="submit" class="btn bg-green-300 text-black text-center font-bold py-5 px-4 w-full"
-                onclick="checkInfo();">確認</div>
+                onclick="checkInfo();">{{ lang["confirm"] }}</div>
         </div>
     </div>
     <div id="info_check" class="hidden px-5">
-        <h1 class="font-bold text-2xl text-center">資訊確認</h1>
+        <h1 class="font-bold text-2xl text-center">{{ lang["info_check"] }}</h1>
         <form action="" method="post" target="_self">
             <div class="mb-6">
-                <label for="id" class="mb-2 text-sm font-medium text-gray-900">id</label>
+                <label for="id" class="mb-2 text-sm font-medium text-gray-900">{{ lang["id"] }}</label>
                 <input type="text" id="id_input" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 " placeholder="id" required />
             </div>
             <div class="mb-6">
-                <label for="isbn" class="mb-2 text-sm font-medium text-gray-900">ISBN</label>
+                <label for="isbn" class="mb-2 text-sm font-medium text-gray-900">{{ lang["ISBN"] }}</label>
                 <input type="text" id="isbn_input" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 " placeholder="ISBN"/>
             </div>
             <div class="mb-6">
-                <label for="name" class="mb-2 text-sm font-medium text-gray-900">名稱</label>
+                <label for="name" class="mb-2 text-sm font-medium text-gray-900">{{ lang["book_name"] }}</label>
                 <input type="text" id="name_input" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 " placeholder="找不到書名 :(" required />
             </div>
             <div class="mb-6">
-                <label for="collection" class="mb-2 text-sm font-medium text-gray-900">分類</label>
+                <label for="collection" class="mb-2 text-sm font-medium text-gray-900">{{ lang["collection"] }}</label>
                 <select name="collection" id="collection_input" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
-                    <option value="">--請選擇--</option>
+                    <option value="">--{{ lang["select"] }}--</option>
                 </select>
             </div>
         </form>
         <div class="flex flex-row w-full gap-2 justify-center">
-            <div class="btn bg-red-300 text-black text-center font-bold py-5 px-4 w-full" onclick="rescan();">重新掃描</div>
-            <div id="submit" class="btn bg-green-300 text-black text-center font-bold py-5 px-4 w-full" onclick="submitRecord();">確認送出</div> <!--TODO: work on submitting-->
+            <div class="btn bg-red-300 text-black text-center font-bold py-5 px-4 w-full" onclick="rescan();">{{ lang["rescan"] }}</div>
+            <div id="submit" class="btn bg-green-300 text-black text-center font-bold py-5 px-4 w-full" onclick="submitRecord();">{{ lang["confirm"] }}</div>
         </div>
     </div>
 </div>
@@ -110,13 +110,25 @@
         html5QrCode.start({ facingMode: 'environment' }, config, QrCallback);
     }
 
+    function checkAvailability() {
+        fetch(`/api/available?id=${idCheck.value}`)
+            .then((r) => { return r.json() })
+            .then((json) => {
+                console.log(json);
+                if (!(json["success"])) {
+                    alert(json["message"]);
+                    rescan();
+                }
+            });
+    }
+
 
     function checkInfo() {
         resultScreen.style.display = "none";
         infoScreen.style.display = "block";
         idCheck.value = decoded;
         isbnCheck.value = decoded;
-
+        checkAvailability();
         fetch("/api/collection")
             .then((r) => { return r.json() })
             .then((json) => {
@@ -124,7 +136,7 @@
                 collectionCheck.innerHTML = "";
                 let option = document.createElement("option");
                 option.value = "";
-                option.text = "--請選擇--";
+                option.text = "--{{ lang['select'] }}--";
                 option.id = "no_option";
                 collectionCheck.add(option);
                 for (const [key, value] of Object.entries(json)) {
@@ -136,24 +148,24 @@
                 }
                 option = document.createElement("option");
                 option.value = "__new__";
-                option.text = "new";
+                option.text = "{{ lang['new_collection'] }}";
                 option.id = "new_option";
                 collectionCheck.add(option);
 
                 collectionCheck.addEventListener("change", () => {
                     if (collectionCheck.value == "__new__") {
-                        collectionName = prompt("創造一個分類名字:");
+                        collectionName = prompt("{{ lang['give_a_collection_name'] }}");
                         if (collectionName == "" || collectionName == null) {
-                            alert("登記錯誤");
+                            alert("{{ lang['registration_error'] }}");
                             collectionCheck.value = "";
                             return
                         }
-                        collectionId = prompt("創造一個獨一無二的分類id:");
+                        collectionId = prompt("{{ lang['give_a_unique_id'] }}");
                         while (used_id.includes(collectionId)) {
-                            collectionId = prompt(`"${collectionId}"已經被用過，創造一個獨一無二的分類id:`);
+                            collectionId = prompt(`"${collectionId}"{{ lang['has_been_used'] }}{{ lang['give_a_unique_id'] }}`);
                         }
                         if (collectionId == "" || collectionId == null) {
-                            alert("登記錯誤");
+                            alert("{{ lang['registration_error'] }}");
                             collectionCheck.value = "";
                             return
                         }
@@ -177,7 +189,11 @@
 
     function submitRecord() {
         if (collectionCheck.value == "") {
-            alert("分類不可空白");
+            alert("{{ lang['collection_should_not_be_blank'] }}");
+            return
+        }
+        if (isbnCheck.value != "" && (parseInt(isbnCheck.value[12]) != (10 - (parseInt(isbnCheck.value[0]) * 1 + parseInt(isbnCheck.value[1]) * 3 + parseInt(isbnCheck.value[2]) * 1 + parseInt(isbnCheck.value[3]) * 3 + parseInt(isbnCheck.value[4]) * 1 + parseInt(isbnCheck.value[5]) * 3 + parseInt(isbnCheck.value[6]) * 1 + parseInt(isbnCheck.value[7]) * 3 + parseInt(isbnCheck.value[8]) * 1 + parseInt(isbnCheck.value[9]) * 3 + parseInt(isbnCheck.value[10]) * 1 + parseInt(isbnCheck.value[11]) * 3) % 10) % 10 && isbnCheck.value[7] != (((11 - (parseInt(isbnCheck.value[0]) * 8 + parseInt(isbnCheck.value[1]) * 7 + parseInt(isbnCheck.value[2]) * 6 + parseInt(isbnCheck.value[3]) * 5 + parseInt(isbnCheck.value[4]) * 4 + parseInt(isbnCheck.value[5]) * 3 + parseInt(isbnCheck.value[6]) * 2) % 11) % 11) == 10 ? "X" : ((11 - (parseInt(isbnCheck.value[0]) * 8 + parseInt(isbnCheck.value[1]) * 7 + parseInt(isbnCheck.value[2]) * 6 + parseInt(isbnCheck.value[3]) * 5 + parseInt(isbnCheck.value[4]) * 4 + parseInt(isbnCheck.value[5]) * 3 + parseInt(isbnCheck.value[6]) * 2) % 11) % 11)))) {
+            alert("{{ lang['invalid_ISBN'] }}");
             return
         }
         data = JSON.stringify({
