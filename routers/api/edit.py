@@ -68,7 +68,7 @@ async def edit_lot(book: Books):
     for id in book.ids:
         if await checkIsbnInfo(id):  # check if the book is registered
             return {"success": False, "message": "Book has not been registered!"}
-        with open(os.path.join(dataPath, "locations", isbnIndex[id]+".json"), "r", encoding="utf-8") as j:
+        with open(os.path.join(locationPath, isbnIndex[id]+".json"), "r", encoding="utf-8") as j:
             jsn = json.load(j)
             dat = jsn[id]
         await shelver.remove(isbnIndex[id], id)

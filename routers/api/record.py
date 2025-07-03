@@ -18,7 +18,7 @@ async def record(rec: Record):
         return {"success": False, "message": "Book not found, please register or rescan."}
     # result = result.get("path", "_")
     collectionName = collectionNameIndex.get(result, False)
-    newFile = os.path.join(dataPath, "locations",
+    newFile = os.path.join(locationPath,
                            result+".json")  # only one layer
     print(newFile)
     if not os.path.exists(newFile):
