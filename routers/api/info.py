@@ -18,3 +18,13 @@ async def queryCollection():
     # with open(locationNameIndexPath,"r",encoding="utf-8") as j:
     #     jsn = json.load(j)
     #     return JSONResponse(json.dumps(jsn))
+
+@router.get("/api/info")
+async def queryInfo(id:str):
+    ret = {"id": id, "collection": isbnIndex[id] }
+    if isbnIndex.get(id, False):
+        with open(os.path.join(dataPath, "locations", isbnIndex[id]+".json"), "r", encoding="utf-8") as j:
+            jsn = json.load(j)
+            ret["name"] = jsn[id].get("name", "")
+            ret["ISBN"] = jsn[id].get("ISBN", "")
+    return ret

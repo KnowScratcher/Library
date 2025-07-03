@@ -35,3 +35,8 @@ async def registerPage(request: Request):
 async def queryPage(request: Request):
     return templates.TemplateResponse(
         request=request, name="query.html", context={"name": "紀錄查詢", "lang":lang})
+
+@router.get("/edit")
+async def editPage(request: Request):
+    return templates.TemplateResponse(
+        request=request, name="edit.html", context={"name": "編輯紀錄", "lang":lang})

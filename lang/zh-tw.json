@@ -3,7 +3,7 @@
     "in-out": "紀錄出入",
     "query": "紀錄查詢",
     "register": "登錄圖書",
-    "edit": "編輯紀錄",
+    "edit_record": "編輯紀錄",
     "home": "首頁",
     "book_name": "書名",
     "id": "id",
@@ -26,5 +26,9 @@
     "collection_should_not_be_blank": "分類不可空白",
     "invalid_ISBN": "不合格的ISBN",
     "borrow": "借出",
-    "return": "歸還"
+    "return": "歸還",
+    "check": "勾選",
+    "edit":"編輯",
+    "cancel":"取消",
+    "edit_success": "編輯成功"
 }

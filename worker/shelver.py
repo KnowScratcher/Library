@@ -21,3 +21,21 @@ async def add(location:str,id:str,isbn:str,name:str) -> bool:
         json.dump(data,f)
         f.truncate()
     return True
+
+async def remove(location:str,id:str) -> bool:
+    """remove a book to a collection using id
+
+    Args:
+        location (str): old collection id
+        id (str): the id of the book
+
+    Returns:
+        bool: always `True` if run successfully
+    """
+    with open(os.path.join(locationPath,location+".json"),"r+",encoding="utf-8") as f:
+        data = json.load(f)
+        del data[id]
+        f.seek(0)
+        json.dump(data,f)
+        f.truncate()
+    return True

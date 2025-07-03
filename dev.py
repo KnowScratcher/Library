@@ -3,7 +3,7 @@ import socket
 from dependencies import *
 from pydantic import BaseModel
 from worker import isbnindex
-from routers.api import record, register, info, query
+from routers.api import record, register, info, query, edit
 from routers import webpage
 from contextlib import asynccontextmanager
 import uvicorn
@@ -36,6 +36,7 @@ app.include_router(record.router)
 app.include_router(register.router)
 app.include_router(info.router)
 app.include_router(query.router)
+app.include_router(edit.router)
 
 
 if __name__ == "__main__":

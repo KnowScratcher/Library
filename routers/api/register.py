@@ -43,7 +43,7 @@ async def register(book: Book):
     if not book.collection in collectionNameIndex:  # check whether to register a new collection
         if not await locationName.registerLocation(book.collection, book.collectionName):
             return {"success": False, "message": "Collection register failed."}
-    await isbnindex.add(book.id, book.collection)
+    await isbnindex.set(book.id, book.collection)
     await shelver.add(book.collection, book.id, book.isbn, book.name)
     return {"success": True, "collection": book.collection, "collectionName": book.collectionName, "id": book.id, "name": book.name}
 

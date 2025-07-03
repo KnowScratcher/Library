@@ -1,0 +1,319 @@
+{% extends 'base.html' %}
+{% block content %}
+{% include 'bar.html' %}
+<script src="{{ url_for('static', path='/html5-qrcode.min.js') }}"></script>
+<div style="text-align: center;" id="main">
+    <div class="w-full px-5 my-5 flex flex-col gap-5">
+        <input type="text" id="search" placeholder="{{ lang['search'] }}..."
+            class="bg-gray-50 border-2 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+
+        <button id="editButton"
+            class="btn bg-yellow-300 text-black text-center text-2xl rounded-2xl py-5 px-4 w-full opacity-50"
+            onclick="ready();">{{
+            lang["edit"] }}</button>
+    </div>
+    <br>
+    <div id="result_check">
+        <h1 class="peertext-2xl font-bold">{{ lang["result"] }}</h1>
+        <div id="result" class="w-full px-5">
+            <table class="w-full table-fixed">
+                <thead>
+                    <tr>
+                        <th>{{ lang["check"] }}</th>
+                        <th>{{ lang["book_name"] }}</th>
+                        <th>{{ lang["id"] }}</th>
+                        <th>{{ lang["ISBN"] }}</th>
+                        <th>{{ lang["status"] }}</th>
+                        <th>{{ lang["collection"] }}</th>
+                    </tr>
+                </thead>
+                <tbody id="tbody">
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>
+<div id="edit" class="hidden px-5">
+    <h1 class="font-bold text-2xl text-center">{{ lang["info_check"] }}</h1>
+    <form action="" method="post" target="_self">
+        <div class="mb-6">
+            <label for="id" class="mb-2 text-sm font-medium text-gray-900">{{ lang["id"] }}</label>
+            <input type="text" id="id_input"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
+                placeholder="id" required />
+        </div>
+        <div class="mb-6">
+            <label for="isbn" class="mb-2 text-sm font-medium text-gray-900">{{ lang["ISBN"] }}</label>
+            <input type="text" id="isbn_input"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
+                placeholder="ISBN" />
+        </div>
+        <div class="mb-6">
+            <label for="name" class="mb-2 text-sm font-medium text-gray-900">{{ lang["book_name"] }}</label>
+            <input type="text" id="name_input"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
+                placeholder="找不到書名 :(" required />
+        </div>
+        <div class="mb-6">
+            <label for="collection" class="mb-2 text-sm font-medium text-gray-900">{{ lang["collection"] }}</label>
+            <select name="collection" id="collection_input"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                <option value="">--{{ lang["select"] }}--</option>
+            </select>
+        </div>
+    </form>
+    <div class="flex flex-row w-full gap-2 justify-center">
+        <div class="btn bg-red-300 text-black text-center font-bold py-5 px-4 w-full" onclick="cancel();">{{
+            lang["cancel"] }}</div>
+        <div id="submit" class="btn bg-green-300 text-black text-center font-bold py-5 px-4 w-full"
+            onclick="submitRecord();">{{ lang["confirm"] }}</div>
+    </div>
+</div>
+<script>
+    let inputArea = document.getElementById("search");
+    let tbody = document.getElementById("tbody");
+    let checked = [];
+    let mainScreen = document.getElementById("main");
+    let editScreen = document.getElementById("edit");
+    let editButton = document.getElementById("editButton");
+
+    let idInput = document.getElementById("id_input");
+    let isbnInput = document.getElementById("isbn_input");
+    let nameInput = document.getElementById("name_input");
+    let collectionInput = document.getElementById("collection_input");
+
+    inputArea.addEventListener('input', function (evt) {
+        queryRecord(this.value);
+    });
+    queryRecord("");
+
+    function queryRecord(index) {
+        let url = "/api/query?index=" + index;
+        fetch(url, {
+            method: "GET", headers: {  // Add these headers
+                "Content-Type": "application/json"
+            }
+        })
+            .then((r) => { return r.json() })
+            .then((data) => {
+                console.log(data)
+                if (data["success"] != true) {
+                    alert(data["data"]);
+                } else {
+                    updateTable(data["data"]);
+                }
+            })
+    }
+
+    function updateTable(data) {
+        tbody.innerHTML = "";
+        let count = 0;
+        data.forEach(element => {
+            let tr = document.createElement("tr");
+            let check_box_td = document.createElement("td");
+            let check_box = document.createElement("input");
+            check_box_td.classList = "mt-auto mb-auto";
+            check_box.type = "checkbox";
+            check_box.classList = "w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-blue-500";
+            check_box.onchange = function (event) { toggleCheck(event.target.closest('tr').id); }
+            if (checked.includes(element["id"])) {
+                check_box.checked = true;
+            }
+            check_box_td.appendChild(check_box);
+            tr.appendChild(check_box_td);
+            if (count % 2 == 0) {
+                tr.classList.add("bg-gray-200");
+            }
+            count++;
+            tr.id = element["id"];
+            for (i of ["name", "id", "ISBN", "isHere", "collection"]) {
+                let td = document.createElement("td");
+                if (i == "isHere") {
+                    td.innerHTML = (element["isHere"] ? "{{ lang['in'] }}" : "{{ lang['out'] }}");
+                    td.style.color = (element["isHere"] ? "green" : "red");
+                } else if ((i == "ISBN" || i == "id") && element[i]) {
+                    let s = "";
+                    for (let j = 0; j < element[i].length; j += 3) {
+                        s += element[i].slice(j, j + 3) + " ";
+                    }
+                    td.innerHTML = s
+                } else {
+                    td.innerHTML = (element[i] ? element[i] : "-");
+                }
+
+                td.classList.add("px-1");
+                // td.classList.add("border-black");
+                tr.appendChild(td);
+            }
+            tbody.appendChild(tr);
+        });
+    }
+
+    function toggleCheck(id) {
+        if (checked.includes(id)) {
+            checked.splice(checked.indexOf(id), 1);
+        } else {
+            checked.push(id);
+        }
+        if (checked.length > 0) {
+            editButton.classList.remove("opacity-50");
+        } else {
+            editButton.classList.add("opacity-50");
+
+        }
+    }
+
+    let used_id = [];
+    function ready() {
+        if (checked.length > 0) {
+            mainScreen.classList.add("hidden");
+            editScreen.classList.remove("hidden");
+        }
+        fetch("/api/collection")
+            .then((r) => { return r.json() })
+            .then((json) => {
+                json = JSON.parse(json)
+                collectionInput.innerHTML = "";
+                let option = document.createElement("option");
+                option.value = "";
+                option.text = "--{{ lang['select'] }}--";
+                option.id = "no_option";
+                collectionInput.add(option);
+                for (const [key, value] of Object.entries(json)) {
+                    used_id.push(key);
+                    let option = document.createElement("option");
+                    option.value = key;
+                    option.text = value;
+                    collectionInput.add(option);
+                }
+                option = document.createElement("option");
+                option.value = "__new__";
+                option.text = "{{ lang['new_collection'] }}";
+                option.id = "new_option";
+                collectionInput.add(option);
+
+                collectionInput.addEventListener("change", () => {
+                    if (collectionInput.value == "__new__") {
+                        collectionName = prompt("{{ lang['give_a_collection_name'] }}");
+                        if (collectionName == "" || collectionName == null) {
+                            alert("{{ lang['registration_error'] }}");
+                            collectionInput.value = "";
+                            return
+                        }
+                        collectionId = prompt("{{ lang['give_a_unique_id'] }}");
+                        while (used_id.includes(collectionId)) {
+                            collectionId = prompt(`"${collectionId}"{{ lang['has_been_used'] }}{{ lang['give_a_unique_id'] }}`);
+                        }
+                        if (collectionId == "" || collectionId == null) {
+                            alert("{{ lang['registration_error'] }}");
+                            collectionInput.value = "";
+                            return
+                        }
+                        document.getElementById("new_option").remove();
+                        let option = document.createElement("option");
+                        option.value = collectionId;
+                        option.text = collectionName;
+                        collectionInput.add(option);
+                        collectionInput.value = collectionId;
+
+                        option = document.createElement("option");
+                        option.value = "__new__";
+                        option.text = "new";
+                        option.id = "new_option";
+                        collectionInput.add(option);
+                    }
+                });
+            });
+        if (checked.length > 1) {
+            idInput.disabled = true;
+            isbnInput.disabled = true;
+            nameInput.disabled = true;
+            idInput.value = "";
+            isbnInput.value = "";
+            nameInput.value = "";
+            idInput.placeholder = "不允許多筆查詢";
+            isbnInput.placeholder = "不允許多筆查詢";
+            nameInput.placeholder = "不允許多筆查詢";
+        } else {
+            idInput.disabled = false;
+            isbnInput.disabled = false;
+            nameInput.disabled = false;
+            idInput.placeholder = "id";
+            isbnInput.placeholder = "ISBN";
+            nameInput.placeholder = "找不到書名 :(";
+            fetch(`/api/info?id=${checked[0]}`)
+                .then((r) => { return r.json() })
+                .then((json) => {
+                    idInput.value = json["id"];
+                    isbnInput.value = json["ISBN"];
+                    nameInput.value = json["name"];
+                    collectionInput.value = json["collection"];
+                })
+        }
+    }
+
+    function submitRecord() {
+        if (collectionInput.value == "") {
+            alert("{{ lang['collection_should_not_be_blank'] }}");
+            return
+        }
+        if (isbnInput.value != "" && (parseInt(isbnInput.value[12]) != (10 - (parseInt(isbnInput.value[0]) * 1 + parseInt(isbnInput.value[1]) * 3 + parseInt(isbnInput.value[2]) * 1 + parseInt(isbnInput.value[3]) * 3 + parseInt(isbnInput.value[4]) * 1 + parseInt(isbnInput.value[5]) * 3 + parseInt(isbnInput.value[6]) * 1 + parseInt(isbnInput.value[7]) * 3 + parseInt(isbnInput.value[8]) * 1 + parseInt(isbnInput.value[9]) * 3 + parseInt(isbnInput.value[10]) * 1 + parseInt(isbnInput.value[11]) * 3) % 10) % 10 && isbnInput.value[7] != (((11 - (parseInt(isbnInput.value[0]) * 8 + parseInt(isbnInput.value[1]) * 7 + parseInt(isbnInput.value[2]) * 6 + parseInt(isbnInput.value[3]) * 5 + parseInt(isbnInput.value[4]) * 4 + parseInt(isbnInput.value[5]) * 3 + parseInt(isbnInput.value[6]) * 2) % 11) % 11) == 10 ? "X" : ((11 - (parseInt(isbnInput.value[0]) * 8 + parseInt(isbnInput.value[1]) * 7 + parseInt(isbnInput.value[2]) * 6 + parseInt(isbnInput.value[3]) * 5 + parseInt(isbnInput.value[4]) * 4 + parseInt(isbnInput.value[5]) * 3 + parseInt(isbnInput.value[6]) * 2) % 11) % 11)))) {
+            alert("{{ lang['invalid_ISBN'] }}");
+            return
+        }
+        if (checked.length == 1) {
+            data = JSON.stringify({
+                "id": idInput.value,
+                "isbn": isbnInput.value,
+                "name": nameInput.value,
+                "collection": collectionInput.value,
+                "collectionName": collectionInput.options[collectionInput.selectedIndex].text
+            });
+            fetch("/api/edit_one", {
+                method: "POST", body: data, headers: {  // Add these headers
+                    "Content-Type": "application/json"
+                }
+            })
+                .then((r) => { return r.json() })
+                .then((data) => {
+                    console.log(data)
+                    if (data["success"] != true) {
+                        alert(data["message"]);
+                    }else {
+                        alert("{{ lang['edit_success'] }}");
+                        location.reload();
+                    }
+                    cancel();
+                })
+        }else {
+            data = JSON.stringify({
+                "ids": checked,
+                "collection": collectionInput.value,
+                "collectionName": collectionInput.options[collectionInput.selectedIndex].text
+            });
+            fetch("/api/edit_lot", {
+                method: "POST", body: data, headers: {  // Add these headers
+                    "Content-Type": "application/json"
+                }
+            })
+                .then((r) => { return r.json() })
+                .then((data) => {
+                    console.log(data)
+                    if (data["success"] != true) {
+                        alert(data["message"]);
+                    }else {
+                        alert("{{ lang['edit_success'] }}");
+                        location.reload();
+                    }
+                    cancel();
+                })
+        }
+    }
+
+    function cancel() {
+        mainScreen.classList.remove("hidden");
+        editScreen.classList.add("hidden");
+    }
+</script>
+{% endblock %}

@@ -14,8 +14,8 @@ async def refreshAll():
     with open(isbnIndexPath,"w",encoding="utf-8") as f:
         json.dump(data,f)
 
-async def add(isbn,location):
-    """adds a index to `isbn.json`"""
+async def set(isbn,location):
+    """sets a index to `isbn.json`"""
     isbnIndex[isbn] = location
     with open(isbnIndexPath,"w",encoding="utf-8") as f:
         json.dump(isbnIndex,f)
