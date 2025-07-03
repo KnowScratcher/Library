@@ -4,6 +4,8 @@ author: "Know Scratcher"
 description: "A book managing system."
 created_at: "2025-02-15"
 ---
+# 2025 June 27th & before: wrote the basic ui.
+At this time I haven't git init yet, but I made a little web ui for the system.
 
 # 2025 June 28th: Upgrade UI.
 
