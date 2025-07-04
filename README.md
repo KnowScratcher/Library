@@ -3,12 +3,18 @@ Library - A book managing system.
 
 <div align="center">
 <img alt="page" src="https://raw.githubusercontent.com/KnowScratcher/Library/refs/heads/main/jounal_img/home.png" height="400px">
+
+Never Lose Your Book Again!
 </div>
 
 # How to use
 1. Register a book using home > register by scanning the barcode of your book
    
-2. 
+2. Use Borrow & Return to record where your book is.
+
+3. Use Query to find the status of the book.
+
+4. Edit the data using Edit.
 
 # Install
 
