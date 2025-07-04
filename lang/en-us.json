@@ -30,5 +30,7 @@
     "check_select": "select",
     "edit":"edit",
     "cancel":"cancel",
-    "edit_success": "edit successfully"
+    "edit_success": "edit successfully",
+    "please_scan_book_barcode": "please scan book barcode"
+
 }

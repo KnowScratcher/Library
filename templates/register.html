@@ -3,7 +3,8 @@
 {% include 'bar.html' %}
 <script src="{{ url_for('static', path='/html5-qrcode.min.js') }}"></script>
 <div>
-    <div id="reader" style="width: 90vw;"></div>
+    <h1 class="text-center text-2xl">{{ lang['please_scan_book_barcode'] }}</h1>
+    <div class="ml-auto mr-auto" id="reader" style="width: 90vw;"></div>
     <br>
     <div class="px-5">
         <div id="info" class="hidden box box-border border-2 border-black w-full px-5 py-5 text-center">
