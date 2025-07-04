@@ -1,6 +1,14 @@
 # Library
+<div align="center">
+<img alt="page" src="https://raw.githubusercontent.com/KnowScratcher/Library/refs/heads/main/jounal_img/home.png" height="400px">
+</div>
 
 Library - A book managing system.
+
+# How to use
+1. Register a book using home > register
+   
+2. 
 
 # Install
 

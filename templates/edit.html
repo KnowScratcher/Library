@@ -19,7 +19,7 @@
             <table class="w-full table-fixed">
                 <thead>
                     <tr>
-                        <th>{{ lang["check"] }}</th>
+                        <th>{{ lang['check_select'] }}</th>
                         <th>{{ lang["book_name"] }}</th>
                         <th>{{ lang["id"] }}</th>
                         <th>{{ lang["ISBN"] }}</th>
@@ -59,7 +59,7 @@
             <label for="collection" class="mb-2 text-sm font-medium text-gray-900">{{ lang["collection"] }}</label>
             <select name="collection" id="collection_input"
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
-                <option value="">--{{ lang["select"] }}--</option>
+                <option value="">--{{ lang['please_select'] }}--</option>
             </select>
         </div>
     </form>
@@ -130,7 +130,7 @@
             for (i of ["name", "id", "ISBN", "isHere", "collection"]) {
                 let td = document.createElement("td");
                 if (i == "isHere") {
-                    td.innerHTML = (element["isHere"] ? "{{ lang['in'] }}" : "{{ lang['out'] }}");
+                    td.innerHTML = (element["isHere"] ? "{{ lang['available'] }}" : "{{ lang['checked_out'] }}");
                     td.style.color = (element["isHere"] ? "green" : "red");
                 } else if ((i == "ISBN" || i == "id") && element[i]) {
                     let s = "";
@@ -177,7 +177,7 @@
                 collectionInput.innerHTML = "";
                 let option = document.createElement("option");
                 option.value = "";
-                option.text = "--{{ lang['select'] }}--";
+                option.text = "--{{ lang['please_select'] }}--";
                 option.id = "no_option";
                 collectionInput.add(option);
                 for (const [key, value] of Object.entries(json)) {

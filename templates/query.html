@@ -66,7 +66,7 @@
             for (i of ["name", "id", "ISBN", "isHere", "collection"]) {
                 let td = document.createElement("td");
                 if (i == "isHere") {
-                    td.innerHTML = (element["isHere"] ? "{{ lang['in'] }}" : "{{ lang['out'] }}");
+                    td.innerHTML = (element["isHere"] ? "{{ lang['available'] }}" : "{{ lang['checked_out'] }}");
                     td.style.color = (element["isHere"] ? "green" : "red");
                 } else if ((i == "ISBN" || i == "id") && element[i]) {
                     let s = "";

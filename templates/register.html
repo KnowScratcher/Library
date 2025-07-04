@@ -39,7 +39,7 @@
             <div class="mb-6">
                 <label for="collection" class="mb-2 text-sm font-medium text-gray-900">{{ lang["collection"] }}</label>
                 <select name="collection" id="collection_input" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
-                    <option value="">--{{ lang["select"] }}--</option>
+                    <option value="">--{{ lang['please_select'] }}--</option>
                 </select>
             </div>
         </form>
@@ -136,7 +136,7 @@
                 collectionCheck.innerHTML = "";
                 let option = document.createElement("option");
                 option.value = "";
-                option.text = "--{{ lang['select'] }}--";
+                option.text = "--{{ lang['please_select'] }}--";
                 option.id = "no_option";
                 collectionCheck.add(option);
                 for (const [key, value] of Object.entries(json)) {
